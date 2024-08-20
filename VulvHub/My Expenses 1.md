@@ -34,7 +34,7 @@ Primero tratamos de reconocer la IP de nuestro objetivo con arp-scan.
 sudo arp-scan -I eth0 --localnet --ignoredups
 ```
 
-![[Screenshot 2024-08-20 193700.png]]
+![[../Screenshots/Screenshot 2024-08-20 193700.png]]
 
 Acá vemos que nuestro target tiene de ip el  ``192.168.0.24``.
 Con nuestro target identificado chequeamos si está encendida y operativa.
