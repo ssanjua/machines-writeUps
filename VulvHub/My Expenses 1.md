@@ -34,7 +34,7 @@ Primero tratamos de reconocer la IP de nuestro objetivo con arp-scan.
 sudo arp-scan -I eth0 --localnet --ignoredups
 ```
 
-![[../Screenshots/Screenshot 2024-08-20 193700.png]]
+![nombre](../Screenshots/Screenshot 2024-08-20 193700.png)
 
 Acá vemos que nuestro target tiene de ip el  ``192.168.0.24``.
 Con nuestro target identificado chequeamos si está encendida y operativa.
@@ -45,7 +45,7 @@ ping <IP_VICTIMA>
 
 Vemos en el output que la máquina víctima está encendida y que estamos frente a un sistema **Linux** ya que el ttl es 64, correspondiendo a los sistemas operativos Linux.
 
-![[Screenshots/Screenshot 2024-08-20 181456.png]]
+![[./Screenshots/Screenshot 2024-08-20 181456.png]]
 
 
 Colocamos la IP en el navegador para ver con que estamos tratando
