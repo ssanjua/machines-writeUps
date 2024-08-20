@@ -45,7 +45,8 @@ ping <IP_VICTIMA>
 
 Vemos en el output que la máquina víctima está encendida y que estamos frente a un sistema **Linux** ya que el ttl es 64, correspondiendo a los sistemas operativos Linux.
 
-![[Screenshot 2024-08-20 181456.png]]
+![[Screenshots/Screenshot 2024-08-20 181456.png]]
+
 
 Colocamos la IP en el navegador para ver con que estamos tratando
 
