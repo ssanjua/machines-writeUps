@@ -50,7 +50,7 @@ Vemos en el output que la máquina víctima está encendida y que estamos frente
 
 Colocamos la IP en el navegador para ver con que estamos tratando
 
-![[Screenshot 2024-08-20 181642.png]]
+![[../Screenshot 2024-08-20 181642.png]]
 
 Ahora hacemos un escaneo con nmap para ver que servicios está corriendo la máquina víctima.
 
