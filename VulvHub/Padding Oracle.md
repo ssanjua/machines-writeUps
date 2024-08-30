@@ -40,4 +40,4 @@ PadBuster es una herramienta diseñada para automatizar el proceso de descifrado
 
 ---
 
-![Descripción](../Screenshots/Screenshot2024-08-30 224251.png)![[Screenshot2024-08-30 224251.png]]
+![Descripción](../Screenshots/Screenshot2024-08-30224251.png)
