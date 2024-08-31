@@ -1,6 +1,6 @@
 
 ---
-- Tags: #machine #vulnhub
+- Tags: #machine #vulnhub #easy
 ----
 - **Name**: MyExpense: 1
 - **Date release**: 7 Dec 2019

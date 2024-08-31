@@ -1,11 +1,12 @@
 
 ---
-- Tags: #vulnhub #paddingOracle
+- Tags: #vulnhub #paddingOracle #easy
 ----
 - **Name**: Pentester Lab: Padding Oracle
 - **Date release**: 9 Dec 2016
 - **Author**: [Pentester Lab](https://www.vulnhub.com/author/pentester-lab,69/)
 - **Series**: [Pentester Lab](https://www.vulnhub.com/series/pentester-lab,41/)
+- **Lab:** [Vulnhub web](https://www.vulnhub.com/entry/pentester-lab-padding-oracle,174)
 - **Web page**: [https://pentesterlab.com/exercises/padding_oracle](https://pentesterlab.com/exercises/padding_oracle)
 
 ## Description
@@ -13,6 +14,91 @@
 This course details the exploitation of a weakness in the authentication of a PHP website. The website uses Cipher Block Chaining (CBC) to encrypt information provided by users and use this information to ensure authentication. The application also leaks if the padding is valid when decrypting the information. We will see how this behaviour can impact the authentication and how it can be exploited.
 
 Source: [https://pentesterlab.com/exercises/padding_oracle/course](https://pentesterlab.com/exercises/padding_oracle/course)
+
+---
+## Inicialización de la máquina
+
+Descargamos el .iso de la web de Vulnhub: [Pading Oracle](https://www.vulnhub.com/entry/pentester-lab-padding-oracle,174)
+Luego inicializamos el .iso con VMware Workstation Pro 17 y configuramos el Network Adapter a **bridge** para que nuestra Maquina virtual Kali Linux se encuentre en la misma red y podamos conectarnos. 
+
+![Descripción](../Screenshots/paddingOracle(0).png)
+## Reconocimiento
+
+Luego de encender la maquina victima y nuestro Kali, tratamos de reconocer la IP de nuestro objetivo con arp-scan.
+
+```bash
+sudo arp-scan -I eth0 --localnet --ignoredups
+```
+
+![Descripción](../Screenshots/paddingOracle(1).png)
+
+Acá vemos que nuestro target tiene de ip el  ``192.168.0.28.
+Con nuestro target identificado chequeamos si está encendida y operativa con ``ping``.
+
+![Descripción](../Screenshots/paddingOracle(2).png)
+
+Vemos en el output que la máquina víctima está encendida y que estamos frente a un sistema **Linux** ya que el ttl es 64, correspondiendo a los sistemas operativos Linux.
+
+Ahora hacemos un escaneo con nmap para ver que servicios está corriendo la máquina víctima.
+
+```bash
+nmap -p- --open -sSV -n -Pn 192.168.0.28
+```
+
+![Descripción](../Screenshots/paddingOracle(3).png)
+
+Identificamos el puerto 80 abierto y corriendo un servicio de **Apache** por lo que abrimos el navegador para ver qué tipo de web tiene montada.
+
+`http://192.168.0.28`
+
+![Descripción](../Screenshots/paddingOracle(4).png)
+
+Vemos que hay un Register así que creamos un usuario.
+
+![Descripción](../Screenshots/paddingOracle(12).png)
+
+![Descripción](../Screenshots/paddingOracle(5).png)
+
+Capturamos la cookie que obtuvimos con nuestro usuario:
+
+![Descripción](../Screenshots/paddingOracle(6).png)
+
+Sabemos que la vulnerabilidad que estamos tratando de explotar es **Padding Oracle** por lo que nos apoyaremos en  un script de Perl ([[padbuster]]) que podemos encontrar aquí:  [GitHub repo](https://github.com/AonCyberLabs/PadBuster)
+
+```bash
+padBuster.pl http://192.168.0.28/index.php <COOKIE> 8 -cookies 'auth=<COOKIE>'
+```
+
+![Descripción](../Screenshots/paddingOracle(7).png)
+
+- `http://192.168.200.132/index.php` : web link.
+- `CBQwdiyx3jioH63e0Fu2PW0nvw2VJx8G`: cookie.
+- `8`: el tamaño del bloque debe ser multiplo de 8    
+- `-cookies 'auth=CBQwdiyx3jioH63e0Fu2PW0nvw2VJx8G`: especificamos el tipo de encripting:  _auth_ cookie.
+
+![Descripción](../Screenshots/paddingOracle(8).png)
+
+Como vemos el script nos desencripta la cookie y aparece en texto plano **user=ssanjua**.
+Lo que queremos es poder autenticarnos como el usuario admin, por lo que si hacemos ingeniería inversa y encriptamos **user=admin**? 
+
+```bash
+padBuster.pl http://192.168.0.28/index.php <COOKIE> 8 -cookies 'auth=<COOKIE> -plaintext 'user=admin'
+```
+
+![Descripción](../Screenshots/paddingOracle(9).png)
+
+![Descripción](../Screenshots/paddingOracle(10).png)
+
+Ahora tenemos el valor **user=admin** encriptado aprovechandonos de la forma en la que **padding** encripta y desencripta los datos.
+
+Si cambiamos en valor el 'navegador' => 'storage' => 'value' por lo que [[padbuster]] nos generó:
+
+![Descripción](../Screenshots/paddingOracle(11).png)
+
+Logramos autenticarnos como admin.
+
+---
+### + Información sobre la vulnerabilidad
 
 Un ataque de oráculo de relleno (**Padding Oracle Attack**) es un tipo de ataque contra datos cifrados que permite al atacante **descifrar** el contenido de los datos **sin conocer la clave**.
 
@@ -37,7 +123,3 @@ En resumen, para usar de manera segura los cifrados de bloques de CBC rellenados
 El ataque de oráculo de relleno puede parecer un poco complejo de entender, ya que implica un proceso de retroalimentación para adivinar el contenido cifrado y modificar el relleno. Sin embargo, existen herramientas como **PadBuster** que pueden automatizar gran parte del proceso.
 
 PadBuster es una herramienta diseñada para automatizar el proceso de descifrado de mensajes cifrados en modo **CBC** que utilizan relleno **PKCS #7**. La herramienta permite a los atacantes enviar peticiones HTTP con **rellenos maliciosos** para determinar si el relleno es válido o no. De esta forma, los atacantes pueden adivinar el contenido cifrado y descifrar todo el mensaje.
-
----
-
-![Descripción](../Screenshots/Screenshot2024-08-30224251.png)
